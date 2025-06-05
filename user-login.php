@@ -2,51 +2,78 @@
 session_start();
 include_once 'config.php';
 
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $email = $_POST['email'];
-    $password = $_POST['password'];
+$passwordErr = $emailErr = "";
+$password = $email = "";
 
-   
-    $sql = "SELECT * FROM users WHERE email = '$email'";
-    $result = $conn->query($sql);
-
-    if ($result->num_rows > 0) {
-        $user = $result->fetch_assoc();
-
-     
-        if (password_verify($password, $email['password'])) {
-            $_SESSION['email_id'] = $email['id'];
-            $_SESSION['email'] = $email['email'];
-            header("Location: dashboard.php");
-            exit;
-        } else {
-            echo "<script>alert('Incorrect password!'); window.location.href='login.php';</script>";
-            exit;
-        }
-    } else {
-        echo "<script>alert('No user found with this email!'); window.location.href='login.php';</script>";
-        exit;
+if($_SERVER["REQUEST_METHOD"] == "POST"){
+    if(empty($_POST["password"])){
+        $passwordErr = "*Password is required";
+    }else{
+        $password = trim($_POST["password"]);
     }
+
+    if(empty($_POST["email"])){
+        $emailErr = "*Email is required";
+    }else{
+        $email = trim($_POST["email"]);
+        if(!filter_var($email, FILTER_VALIDATE_EMAIL)){
+            $emailErr = "*Invalid email format";
+        }
+    }
+
+    if(empty($passwordErr) && empty($emailErr)){
+        $stmt = $conn->prepare("SELECT password FROM users WHERE email = ?");
+        $stmt->bind_param("s", $email);
+        $stmt->execute();
+        $stmt->store_result();
+
+        if($stmt->num_rows == 1){
+            $stmt->bind_result($hashedPasswordFromDB);
+            $stmt->fetch();
+
+            if(password_verify($password, $hashedPasswordFromDB)){
+                $_SESSION["email"] = $email;
+                header("Location: dashboard.php");
+                exit;
+            }else {
+                $passwordErr = "*Incorrect password.";
+            }
+        }else {
+            $emailErr = "*No account found with that email.";
+        }
+    $stmt->close();
+    }
+$conn->close();
 }
-
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/finals/styles/reg-log-style.css">
     <title>Log-in</title>
 </head>
 <body>
-    <form action="dashboard.php" method="POST">
-        <h3>Sign In</h3>
-        <label for="email">Email</label><br>
-        <input type="text" id="username" name="username"><br><br>
-         <label for="pass">Password</label><br>
-        <input type="pass" id="pass" name="pass"><br><br>
-        <button type="submit">Sign In</button>
-        <p>Don't have an account? <a href="user-register.php">Sign up</a></p>
-    </form>
+    <div class="form-container">
+        <form action="user-login.php" method="POST">
+            <h3>Sign in to your account.</h3>
+
+            <div class="container-box">
+                <label for="email">Email</label>
+                <input type="text" id="email" name="email" value="<?php echo htmlspecialchars($email); ?>">
+                <span class="error"><?php echo $emailErr; ?></span>
+            </div>
+
+            <div class="container-box">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password">
+                <span class="error"><?php echo $passwordErr; ?></span>
+            </div>
+
+            <button type="submit">Sign In</button><br>
+            <p class="text">Don't have an account? <a href="user-register.php">Sign up</a></p>
+        </form>
+    </div>
 </body>
 </html>
