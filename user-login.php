@@ -20,31 +20,44 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
             $emailErr = "*Invalid email format";
         }
     }
+}
+    
+    // Lance Change: user login verification so that normal users get redirected to the normal user page and the admin account gets redirected to the admin-dash page
+    if (empty($passwordErr) && empty($emailErr)) {
 
-    if(empty($passwordErr) && empty($emailErr)){
-        $stmt = $conn->prepare("SELECT password FROM users WHERE email = ?");
+        $stmt = $conn->prepare("SELECT password, role FROM users WHERE email = ?");
         $stmt->bind_param("s", $email);
         $stmt->execute();
         $stmt->store_result();
-
-        if($stmt->num_rows == 1){
-            $stmt->bind_result($hashedPasswordFromDB);
+    
+        if ($stmt->num_rows == 1) {
+    
+            $stmt->bind_result($hashedPasswordFromDB, $roleFromDB);
             $stmt->fetch();
-
-            if(password_verify($password, $hashedPasswordFromDB)){
+    
+            if (password_verify($password, $hashedPasswordFromDB)) {
+    
                 $_SESSION["email"] = $email;
-                header("Location: dashboard.php");
+                $_SESSION["role"] = $roleFromDB;
+    
+                if ($roleFromDB === 'admin') {
+                    header("Location: admin-dashboard.php");
+                } else {
+                    header("Location: landing-page.php");
+                }
                 exit;
-            }else {
+            } else {
                 $passwordErr = "*Incorrect password.";
             }
-        }else {
+        } else {
             $emailErr = "*No account found with that email.";
         }
-    $stmt->close();
+        $stmt->close();
     }
-$conn->close();
-}
+    
+    $conn->close();
+    
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
