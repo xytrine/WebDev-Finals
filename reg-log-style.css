@@ -1,0 +1,126 @@
+@import url('https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400..700;1,400..700&family=Open+Sans:ital,wght@0,300..800;1,300..800&family=Sigmar&display=swap');
+
+* {
+    box-sizing: border-box;
+    padding: 0;
+    margin: 0;
+}
+
+:root {
+  --color-background: #F8F9FA;   
+  --color-primary: #002B5B;        
+  --color-secondary: #00B4D8; 
+  --color-text: #4B4B4B;   
+  --color-surface: #F1F3F5;  
+  --color-contrast: #1C1C1C;   
+  --color-error: #D72638;
+  --color-warning: #FFA500; 
+  --color-success: #38B000; 
+  --color-info: #FFD60A;    
+}
+
+
+body {
+    background: url(/finals/images/reg-log-bg.jpg) no-repeat;
+    background-size: cover;
+    background-position: bottom;
+    background-attachment: fixed;
+
+}
+
+.form-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+form {
+    padding: 4em;
+    background-color: var(--color-background);
+   box-shadow: -3px 3px 32px -9px rgba(0,0,0,0.75);
+   border-radius: 5px;
+
+    h3 {
+        font-family: 'Open sans', sans-serif;
+        font-size: 23px;
+        padding-bottom: 20px;
+        opacity: 0.8;
+    }
+
+    label {
+        font-weight: bold;
+         font-family: 'Lora', sans-serif;
+    }
+
+    input {
+        font-family: 'Lora', sans-serif;
+        border: 1px solid var(--color-contrast);
+        border-radius: 5px;
+        padding: 8px;
+        width: 100%;
+        background-color: transparent;
+        opacity: 0.8;
+        outline: none;
+    }
+
+    input:focus {
+    box-shadow: -3px -3px 29px 4px rgba(0,180,216,0.48);
+    }
+
+   
+
+.container-box {
+    margin: 15px 0;
+}
+
+}
+
+button {
+    padding: 10px;
+    border-radius: 5px;
+    background-color: var(--color-primary);
+    color: var(--color-background);
+    font-family: 'Lora', sans-serif;
+    font-size: 17px;
+    border: none;
+    width: 100%;
+    margin: 10px 0;
+    transition: 0.3s;
+}
+
+button:hover {
+    background-color: #024694;
+}
+
+a {
+    text-decoration: none;
+    color: var(--color-contrast);
+    transition: 0.3s;
+}
+
+a:hover {
+    text-decoration: underline;
+    color: var(--color-secondary);
+}
+
+
+ul li, .pass-req {
+    opacity: 0.5px;
+    color: var(--color-text);
+}
+
+.text {
+    opacity: 0.7;
+}
+
+.error{
+    color: #D72638;
+    font-style: italic; 
+    font-weight: bold;
+    font-size: 0.9em; 
+    }
+
+
+
